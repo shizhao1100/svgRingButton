@@ -1,7 +1,5 @@
-(function () {
-    this.svgRingButton = {
-        version: "0.0.1"
-    };
+function svgRingButton(obj) {
+    this.version = "0.0.1";
     let defaultOption = {
         target: '',
         showButtonsName: true,
@@ -42,7 +40,7 @@
             .attr('dy', 0.10 * innerRadius)
             .style("pointer-events", "none")
             .style('font-size', 0.3 * innerRadius)
-            .style('fill',obj.buttonsNameColor);
+            .style('fill', obj.buttonsNameColor);
     }
     let appendTitle = function (svg, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
 
@@ -175,7 +173,7 @@
     let appendDomEvent = function (dom, obj) {
         if (obj.event == 'click') {
             dom.addEventListener('click', function () {
-                return onClick(dom, obj);
+                return onClick(dom, this.obj);
             }, false)
         }
         if (obj.event == 'mouseouver') {
@@ -187,7 +185,8 @@
             }, false)
         }
     }
-    this.svgRingButton.start = function (obj) {
+
+    this.start = function (obj) {
         let _dom = undefined;
         if (obj.target[0] == '.') {
             let _className = obj.target.substring(1, obj.target.length);
@@ -198,15 +197,15 @@
             _dom = document.getElementById(_id);
         }
         if (!(_dom.length)) {
+            _dom.obj = obj;
             appendDomEvent(_dom, obj);
         } else {
             for (let i = 0; i < _dom.length; i++) {
+                _dom[i].obj = obj;
                 appendDomEvent(_dom[i], obj);
             }
         }
     };
-    this.svgRingButton.setOption = (obj) => {
-        let option = Object.assign(defaultOption, obj)
-        this.svgRingButton.start(option);
-    };
-})()
+    this.option = Object.assign(defaultOption, obj)
+    this.start(this.option);
+}
