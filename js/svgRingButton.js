@@ -30,6 +30,7 @@ function svgRingButton(obj) {
         strokeColor: 'white',
         strockWidth: 'auto',
         event: 'click',
+        buttonsHideItme: 1000,
         buttonsEvent: 'click'
     }
 
@@ -51,10 +52,8 @@ function svgRingButton(obj) {
 
     }
     let appendTitle = function (Arc, obj) {
-
         Arc.append('title')
             .text((d, i) => { return obj.buttonsTitle[i] })
-
     }
     let appendIcon = function (SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
         SVG.selectAll().data(d3.layout.pie()(data))
@@ -203,12 +202,16 @@ function svgRingButton(obj) {
     }
 
     let onMouseOver = function (dom, obj) {
-        let domHash = new Date().getTime()
-        dom.domHash = domHash;
-        show(dom, obj, domHash)
+        if (!dom.avtive) {
+            dom.avtive = true;
+            let domHash = new Date().getTime()
+            dom.domHash = domHash;
+            show(dom, obj, domHash)
+        }
     }
     let onMouseOut = function (dom, obj) {
-        hide(dom, obj);        
+
+        setTimeout(function () { hide(dom, obj), dom.avtive = false }, obj.buttonsHideItme);
     }
     let onClick = function (dom, obj) {
         if (dom.avtive) {
@@ -221,6 +224,7 @@ function svgRingButton(obj) {
             show(dom, obj, domHash)
         }
     }
+    
     let appendDomEvent = function (dom, obj) {
         if (obj.event == 'click') {
             dom.addEventListener('click', function () {

@@ -41,7 +41,7 @@ function mian() {
         alert('3')
     };
     let f4 = function (d) {
-        alert('颜色: '+ d.getAttribute('fill'));
+        alert('颜色: ' + d.getAttribute('fill'));
     }
     let f5 = function (d) {
         alert('width: ' + d.getBBox().width + ' height: ' + d.getBBox().height)
@@ -50,10 +50,26 @@ function mian() {
         alert('x: ' + d.getBBox().x + ' y: ' + d.getBBox().y)
     }
     let f7 = function (d) {
-        alert('图形: '+ d.tagName);
+        alert('图形: ' + d.tagName);
     }
-    new svgRingButton({ target: '#triangle',event:'mouseover' })
-    new svgRingButton({ target: '#rect', showButtonsName: false, showButtonsIcon:true,showButtonsTitle:true,buttonsIcon:['img/color.png','img/size.png','img/position.png','img/shape.png'],buttonsTitle:['颜色', '大小', '位置', '图形'], callbacks: [f4, f5, f6, f7] })
-    new svgRingButton({ target: '.circle', buttonsName: ['颜色', '大小', '位置', '图形'], callbacks: [f4, f5, f6, f7] })
+    new svgRingButton({
+        target: '#triangle',
+        event: 'mouseover',
+        buttonsEvent: 'mouseover'
+    })
+    new svgRingButton({
+        target: '#rect',
+        showButtonsName: false,
+        showButtonsIcon: true,
+        showButtonsTitle: true,
+        buttonsIcon: ['img/color.png', 'img/size.png', 'img/position.png', 'img/shape.png'],
+        buttonsTitle: ['颜色', '大小', '位置', '图形'],
+        callbacks: [f4, f5, f6, f7]
+    })
+    new svgRingButton({
+        target: '.circle',
+        buttonsName: ['颜色', '大小', '位置', '图形'],
+        callbacks: [f4, f5, f6, f7]
+    })
 }
 mian();
