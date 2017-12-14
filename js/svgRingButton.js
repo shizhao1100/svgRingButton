@@ -125,7 +125,9 @@ function svgRingButton(obj) {
             let _len = _dom.length;
             if (obj.buttonsEvent == 'click') {
                 for (let i = 0; i < _len; i++) {
-                    _dom[i].addEventListener('click', obj.callbacks[i], false)
+                    _dom[i].addEventListener('click', function(){
+                        return obj.callbacks[i](dom);
+                    }, false)
                 }
             }
         }

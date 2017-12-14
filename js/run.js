@@ -40,26 +40,23 @@ function mian() {
     let f3 = function () {
         alert('3')
     };
-    let f4 = function () {
-
+    let f4 = function (d) {
+        alert('颜色: '+ d.getAttribute('fill'));
     }
-    let f5 = function () {
-
+    let f5 = function (d) {
+        alert('width: ' + d.getBBox().width + ' height: ' + d.getBBox().height)
     }
-    let f6 = function () {
-
+    let f6 = function (d) {
+        alert('x: ' + d.getBBox().x + ' y: ' + d.getBBox().y)
     }
-    let f7 = function () {
-
-    }
-    let f8 = function () {
-
+    let f7 = function (d) {
+        alert('图形: '+ d.tagName);
     }
     new svgRingButton({ target: '#triangle' })
     new svgRingButton({ target: '#rect', buttonsName: ['alart 1', 'alart 2', 'alart 3'], callbacks: [f1, f2, f3] })
     new svgRingButton({ target: '.circle', buttonsName: ['颜色', '大小', '位置', '图形'], callbacks: [f4, f5, f6, f7] })
-    
-    
+
+
     // svgRingButton.setOption({ target: '#triangle' });
     // svgRingButton.setOption({ target: '#rect', buttonsName: ['alart 1', 'alart 2', 'alart 3'], callbacks: [f1, f2, f3] });
     // svgRingButton.setOption({ target: '.circle', buttonsName: ['颜色', '大小', '位置', '图形'], callbacks: [f4, f5, f6, f7] });
