@@ -1,12 +1,12 @@
 function svgRingButton(obj) {
     this.version = "0.0.1";
-    let f1 = function(){
+    let f1 = function () {
         alert(1);
     }
-    let f2 = function(){
+    let f2 = function () {
         alert(2);
     }
-    let f3 = function(){
+    let f3 = function () {
         alert(3);
     }
     let defaultOption = {
@@ -15,7 +15,15 @@ function svgRingButton(obj) {
         buttonsName: ["button1", "button2", "button3"],
         buttonsNameSize: 'auto',
         buttonsNameColor: 'black',
-        callbacks: [f1,f2,f3],
+
+        showButtonsIcon: false,
+        buttonsIcon: [],
+        buttonsIconSize: 'auto',
+
+        showButtonsTitle: false,
+        buttonsTitle: [],
+
+        callbacks: [f1, f2, f3],
         innerRadius: 'auto',
         outerRadius: 'auto',
         buttonColor: 'skyblue',
@@ -25,18 +33,8 @@ function svgRingButton(obj) {
         buttonsEvent: 'click'
     }
 
-    let appenText = function (SVG, data, arc, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
-        function getRotate(i) {
-            let _r = (i + 0.5) / data.length * 360;
-            if (_r <= 90) {
-                return _r
-            } else if (_r <= 270) {
-                return _r - 180;
-            }
-            else {
-                return _r - 360;
-            }
-        }
+    let appenText = function (SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
+
         SVG.selectAll().data(d3.layout.pie()(data))
             .enter()
             .append('text')
@@ -50,15 +48,29 @@ function svgRingButton(obj) {
             .style("pointer-events", "none")
             .style('font-size', 0.3 * innerRadius)
             .style('fill', obj.buttonsNameColor);
-    }
-    let appendTitle = function (svg, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
 
     }
-    let appendIcon = function (svg, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
+    let appendTitle = function (Arc, obj) {
+
+        Arc.append('title')
+            .text((d, i) => { return obj.buttonsTitle[i] })
 
     }
-    let appendArc = function (SVG, data, arc, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
+    let appendIcon = function (SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
         SVG.selectAll().data(d3.layout.pie()(data))
+            .enter()
+            .append('image')
+            .attr('x', d => arc.centroid(d)[0])
+            .attr('y', d => arc.centroid(d)[1])
+            .attr("xlink:href", (d, i) => { return obj.buttonsIcon[i] })
+            .attr("transform", (d, i) => "translate(" + (x - (0.5 * innerRadius) / 2) + "," + (y - (0.5 * innerRadius) / 2) + ")")
+            .attr("class", domHash)
+            .attr('width', 0.5 * innerRadius)
+            .attr('height', 0.5 * innerRadius)
+            .style("pointer-events", "none");
+    }
+    let appendArc = function (SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
+        let Arc = SVG.selectAll().data(d3.layout.pie()(data))
             .enter()
             .append('path')
             .attr("d", arc)
@@ -67,6 +79,7 @@ function svgRingButton(obj) {
             .attr("stroke", obj.strokeColor)
             .attr("stroke-width", strockWidth)
             .attr("class", domHash);
+        return Arc
     }
 
     let appendButtonDom = function (Dom, obj, domHash) {
@@ -102,6 +115,18 @@ function svgRingButton(obj) {
             .outerRadius(outerRadius)
             .innerRadius(innerRadius);
 
+        let getRotate = function (i) {
+            let _r = (i + 0.5) / data.length * 360;
+            if (_r <= 90) {
+                return _r
+            } else if (_r <= 270) {
+                return _r - 180;
+            }
+            else {
+                return _r - 360;
+            }
+        }
+
         let data = new Array(obj.callbacks.length);
 
         for (let i = 0; i < data.length; i++) {
@@ -113,10 +138,16 @@ function svgRingButton(obj) {
 
         let SVG = d3.select(svg);
 
-        appendArc(SVG, data, arc, obj, x, y, innerRadius, outerRadius, strockWidth, domHash);
+        let Arc = appendArc(SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash);
 
         if (obj.showButtonsName) {
-            appenText(SVG, data, arc, obj, x, y, innerRadius, outerRadius, strockWidth, domHash)
+            appenText(SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash)
+        }
+        if (obj.showButtonsTitle) {
+            appendTitle(Arc, obj)
+        }
+        if (obj.showButtonsIcon) {
+            appendIcon(SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash)
         }
     }
     let appendButtonEvent = function (dom, obj, domHash) {
@@ -125,7 +156,14 @@ function svgRingButton(obj) {
             let _len = _dom.length;
             if (obj.buttonsEvent == 'click') {
                 for (let i = 0; i < _len; i++) {
-                    _dom[i].addEventListener('click', function(){
+                    _dom[i].addEventListener('click', function () {
+                        return obj.callbacks[i](dom);
+                    }, false)
+                }
+            }
+            if (obj.buttonsEvent == 'mouseover') {
+                for (let i = 0; i < _len; i++) {
+                    _dom[i].addEventListener('mouseover', function () {
                         return obj.callbacks[i](dom);
                     }, false)
                 }
@@ -165,10 +203,12 @@ function svgRingButton(obj) {
     }
 
     let onMouseOver = function (dom, obj) {
-
+        let domHash = new Date().getTime()
+        dom.domHash = domHash;
+        show(dom, obj, domHash)
     }
     let onMouseOut = function (dom, obj) {
-
+        hide(dom, obj);        
     }
     let onClick = function (dom, obj) {
         if (dom.avtive) {
@@ -187,7 +227,7 @@ function svgRingButton(obj) {
                 return onClick(dom, this.obj);
             }, false)
         }
-        if (obj.event == 'mouseouver') {
+        if (obj.event == 'mouseover') {
             dom.addEventListener('mouseover', function () {
                 return onMouseOver(dom, obj);
             }, false)

@@ -52,14 +52,8 @@ function mian() {
     let f7 = function (d) {
         alert('图形: '+ d.tagName);
     }
-    new svgRingButton({ target: '#triangle' })
-    new svgRingButton({ target: '#rect', buttonsName: ['alart 1', 'alart 2', 'alart 3'], callbacks: [f1, f2, f3] })
+    new svgRingButton({ target: '#triangle',event:'mouseover' })
+    new svgRingButton({ target: '#rect', showButtonsName: false, showButtonsIcon:true,showButtonsTitle:true,buttonsIcon:['img/color.png','img/size.png','img/position.png','img/shape.png'],buttonsTitle:['颜色', '大小', '位置', '图形'], callbacks: [f4, f5, f6, f7] })
     new svgRingButton({ target: '.circle', buttonsName: ['颜色', '大小', '位置', '图形'], callbacks: [f4, f5, f6, f7] })
-
-
-    // svgRingButton.setOption({ target: '#triangle' });
-    // svgRingButton.setOption({ target: '#rect', buttonsName: ['alart 1', 'alart 2', 'alart 3'], callbacks: [f1, f2, f3] });
-    // svgRingButton.setOption({ target: '.circle', buttonsName: ['颜色', '大小', '位置', '图形'], callbacks: [f4, f5, f6, f7] });
-
 }
 mian();
