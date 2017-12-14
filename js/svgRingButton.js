@@ -1,12 +1,21 @@
 function svgRingButton(obj) {
     this.version = "0.0.1";
+    let f1 = function(){
+        alert(1);
+    }
+    let f2 = function(){
+        alert(2);
+    }
+    let f3 = function(){
+        alert(3);
+    }
     let defaultOption = {
         target: '',
         showButtonsName: true,
         buttonsName: ["button1", "button2", "button3"],
         buttonsNameSize: 'auto',
         buttonsNameColor: 'black',
-        callbacks: [],
+        callbacks: [f1,f2,f3],
         innerRadius: 'auto',
         outerRadius: 'auto',
         buttonColor: 'skyblue',
