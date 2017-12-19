@@ -55,9 +55,12 @@ function mian() {
     new svgRingButton({
         target: '#triangle',
         event: 'mouseover',
-        buttonsEvent: 'mouseover'
+        buttonsEvent: 'mouseover',
+        animation:true
     })
     new svgRingButton({
+        animation:true,
+        animationDuration:300,
         target: '#rect',
         showButtonsName: false,
         showButtonsIcon: true,

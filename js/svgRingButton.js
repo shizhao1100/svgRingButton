@@ -23,6 +23,9 @@ function svgRingButton(obj) {
         showButtonsTitle: false,
         buttonsTitle: [],
 
+        animation: false,
+        animationDuration: 500,
+
         callbacks: [f1, f2, f3],
         innerRadius: 'auto',
         outerRadius: 'auto',
@@ -34,50 +37,78 @@ function svgRingButton(obj) {
         buttonsEvent: 'click'
     }
 
-    let appenText = function (SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
-
-        SVG.selectAll().data(d3.layout.pie()(data))
-            .enter()
-            .append('text')
-            .attr('x', d => arc.centroid(d)[0])
-            .attr('y', d => arc.centroid(d)[1])
-            .attr("text-anchor", "middle")
-            .text((d, i) => { return obj.buttonsName[i] })
-            .attr("transform", (d, i) => "translate(" + x + "," + y + ") rotate(" + getRotate(i) + ',' + arc.centroid(d)[0] + ',' + arc.centroid(d)[1] + ")")
-            .attr("class", domHash)
-            .attr('dy', 0.10 * innerRadius)
-            .style("pointer-events", "none")
-            .style('font-size', 0.3 * innerRadius)
-            .style('fill', obj.buttonsNameColor);
-
+    let appenText = function (SVG, data, arcInner, arcOut, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
+        let _appenText = function () {
+            SVG.selectAll().data(d3.layout.pie()(data))
+                .enter()
+                .append('text')
+                .attr('x', d => arcOut.centroid(d)[0])
+                .attr('y', d => arcOut.centroid(d)[1])
+                .attr("text-anchor", "middle")
+                .text((d, i) => { return obj.buttonsName[i] })
+                .attr("transform", (d, i) => "translate(" + x + "," + y + ") rotate(" + getRotate(i) + ',' + arcOut.centroid(d)[0] + ',' + arcOut.centroid(d)[1] + ")")
+                .attr("class", domHash)
+                .attr('dy', 0.10 * innerRadius)
+                .style("pointer-events", "none")
+                .style('font-size', 0.3 * innerRadius)
+                .style('fill', obj.buttonsNameColor);
+        }
+        if (obj.animation) {
+            setTimeout(_appenText, obj.animationDuration);
+        } else {
+            _appenText();
+        }
     }
     let appendTitle = function (Arc, obj) {
         Arc.append('title')
             .text((d, i) => { return obj.buttonsTitle[i] })
     }
-    let appendIcon = function (SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
-        SVG.selectAll().data(d3.layout.pie()(data))
-            .enter()
-            .append('image')
-            .attr('x', d => arc.centroid(d)[0])
-            .attr('y', d => arc.centroid(d)[1])
-            .attr("xlink:href", (d, i) => { return obj.buttonsIcon[i] })
-            .attr("transform", (d, i) => "translate(" + (x - (0.5 * innerRadius) / 2) + "," + (y - (0.5 * innerRadius) / 2) + ")")
-            .attr("class", domHash)
-            .attr('width', 0.5 * innerRadius)
-            .attr('height', 0.5 * innerRadius)
-            .style("pointer-events", "none");
+    let appendIcon = function (SVG, data, arcInner, arcOut, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
+        let _appendIcon = function () {
+            SVG.selectAll().data(d3.layout.pie()(data))
+                .enter()
+                .append('image')
+                .attr('x', d => arcOut.centroid(d)[0])
+                .attr('y', d => arcOut.centroid(d)[1])
+                .attr("xlink:href", (d, i) => { return obj.buttonsIcon[i] })
+                .attr("transform", (d, i) => "translate(" + (x - (0.5 * innerRadius) / 2) + "," + (y - (0.5 * innerRadius) / 2) + ")")
+                .attr("class", domHash)
+                .attr('width', 0.5 * innerRadius)
+                .attr('height', 0.5 * innerRadius)
+                .style("pointer-events", "none");
+        }
+        if (obj.animation) {
+            setTimeout(_appendIcon, obj.animationDuration);
+        } else {
+            _appendIcon();
+        }
     }
-    let appendArc = function (SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
-        let Arc = SVG.selectAll().data(d3.layout.pie()(data))
-            .enter()
-            .append('path')
-            .attr("d", arc)
-            .attr("transform", "translate(" + x + "," + y + ")")
-            .attr("fill", obj.buttonColor)
-            .attr("stroke", obj.strokeColor)
-            .attr("stroke-width", strockWidth)
-            .attr("class", domHash);
+    let appendArc = function (SVG, data, arcInner, arcOut, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash) {
+        let Arc = undefined;
+        if (obj.animation) {
+            Arc = SVG.selectAll().data(d3.layout.pie()(data))
+                .enter()
+                .append('path')
+                .attr("d", arcInner)
+                .attr("transform", "translate(" + x + "," + y + ")")
+                .attr("fill", obj.buttonColor)
+                .attr("stroke", obj.strokeColor)
+                .attr("stroke-width", strockWidth)
+                .attr("class", domHash);
+            Arc.transition()
+                .duration(obj.animationDuration)
+                .attr("d", arcOut)
+        } else {
+            Arc = SVG.selectAll().data(d3.layout.pie()(data))
+                .enter()
+                .append('path')
+                .attr("d", arcOut)
+                .attr("transform", "translate(" + x + "," + y + ")")
+                .attr("fill", obj.buttonColor)
+                .attr("stroke", obj.strokeColor)
+                .attr("stroke-width", strockWidth)
+                .attr("class", domHash);
+        }
         return Arc
     }
 
@@ -110,7 +141,10 @@ function svgRingButton(obj) {
             }
         }
 
-        let arc = d3.svg.arc()
+        let arcInner = d3.svg.arc()
+            .outerRadius(innerRadius)
+            .innerRadius(innerRadius);
+        let arcOut = d3.svg.arc()
             .outerRadius(outerRadius)
             .innerRadius(innerRadius);
 
@@ -137,16 +171,16 @@ function svgRingButton(obj) {
 
         let SVG = d3.select(svg);
 
-        let Arc = appendArc(SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash);
+        let Arc = appendArc(SVG, data, arcInner, arcOut, getRotate, obj, x, y, 0, 0, strockWidth, domHash);
 
         if (obj.showButtonsName) {
-            appenText(SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash)
+            appenText(SVG, data, arcInner, arcOut, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash)
         }
         if (obj.showButtonsTitle) {
             appendTitle(Arc, obj)
         }
         if (obj.showButtonsIcon) {
-            appendIcon(SVG, data, arc, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash)
+            appendIcon(SVG, data, arcInner, arcOut, getRotate, obj, x, y, innerRadius, outerRadius, strockWidth, domHash)
         }
     }
     let appendButtonEvent = function (dom, obj, domHash) {
@@ -210,7 +244,6 @@ function svgRingButton(obj) {
         }
     }
     let onMouseOut = function (dom, obj) {
-
         setTimeout(function () { hide(dom, obj), dom.avtive = false }, obj.buttonsHideItme);
     }
     let onClick = function (dom, obj) {
@@ -224,7 +257,7 @@ function svgRingButton(obj) {
             show(dom, obj, domHash)
         }
     }
-    
+
     let appendDomEvent = function (dom, obj) {
         if (obj.event == 'click') {
             dom.addEventListener('click', function () {
@@ -263,4 +296,13 @@ function svgRingButton(obj) {
     };
     this.option = Object.assign(defaultOption, obj)
     this.start(this.option);
+    this.show = function(){
+
+    }
+    this.hide = function(){
+
+    }
+    this.hold = function(){
+        
+    }
 }
