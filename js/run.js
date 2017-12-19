@@ -52,15 +52,15 @@ function mian() {
     let f7 = function (d) {
         alert('图形: ' + d.tagName);
     }
-    new svgRingButton({
+    let triangleWithRingButtons = new svgRingButton({
         target: '#triangle',
         event: 'mouseover',
         buttonsEvent: 'mouseover',
-        animation:true
+        animation: true
     })
     new svgRingButton({
-        animation:true,
-        animationDuration:300,
+        animation: true,
+        animationDuration: 300,
         target: '#rect',
         showButtonsName: false,
         showButtonsIcon: true,
