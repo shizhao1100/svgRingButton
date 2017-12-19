@@ -3,26 +3,21 @@
 
 目前引用的D3库版本为3.5.17
 ## 说明
----
 可选择一个svg元素为其创建一个环状按钮组。
 ## 效果
----
 ![](https://github.com/shizhao1100/svgRingButton/blob/master/img/screenshot.gif?raw=ture)
 ## 引入
----
 ```javascript
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="js/svgRingButton.min.js" charset="utf-8"></script>
 ```
 ## 最简配置
----
 ```javascript
     new svgRingButton({
         target: '#rect'
     })
 ```
 ## 配置项说明
----
 |配置项|描述|默认值|可选值|
 |:-:|:-:|:-:|:-:|
 |target|目标|''|'#id'\|\|'.className'|
