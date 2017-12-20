@@ -6,6 +6,8 @@
 可选择一个svg元素为其创建一个环状按钮组。
 ## 效果
 ![](https://github.com/shizhao1100/svgRingButton/blob/master/img/screenshot.gif?raw=ture)
+## 演示地址
+http://sz-p.cn/Demo/svgRingButton/
 ## 引入
 ```javascript
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
